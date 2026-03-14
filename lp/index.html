@@ -1,288 +1,1115 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$ASBI - Project RECLAIM</title>
-
+    <meta name="description"
+        content="The world's first community-owned VTuber IP. Global audition show. Built on Solana.">
+    <meta property="og:title" content="$ASBI - Project RECLAIM">
+    <meta property="og:description"
+        content="One character. One unreleased song. A community building the future of virtual entertainment.">
+    <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700;800&family=Roboto+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        abyss: '#0D0D12',
-                        memory: '#8B5CF6',
-                        trust: '#06B6D4',
-                        hope: '#FBBF24',
-                        textgray: '#A1A1AA'
-                    },
-                    fontFamily: {
-                        heading: ['Montserrat', 'sans-serif'],
-                        body: ['Inter', 'sans-serif'],
-                        mono: ['Roboto Mono', 'monospace'],
-                    }
-                }
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            background: #0a0a0f;
+            color: #e0dfe4;
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.7
+        }
+
+        ::selection {
+            background: rgba(108, 63, 160, .5);
+            color: #fff
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0f
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6C3FA0;
+            border-radius: 3px
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: .4
+        }
+
+        /* NAV */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, .7);
+            border-bottom: 1px solid rgba(108, 63, 160, .15);
+            transition: all .3s
+        }
+
+        .nav.scrolled {
+            background: rgba(10, 10, 15, .95)
+        }
+
+        .nav-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: .05em
+        }
+
+        .nav-logo span {
+            color: #9B6DD7
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        .nav-links a {
+            color: #888;
+            font-size: .85rem;
+            text-decoration: none;
+            font-weight: 500;
+            letter-spacing: .03em;
+            transition: color .3s
+        }
+
+        .nav-links a:hover {
+            color: #e0dfe4
+        }
+
+        .nav-cta {
+            background: rgba(108, 63, 160, .2) !important;
+            border: 1px solid rgba(108, 63, 160, .5) !important;
+            color: #c9a8f0 !important;
+            padding: .5rem 1.2rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: .8rem !important;
+            transition: all .3s !important
+        }
+
+        .nav-cta:hover {
+            background: rgba(108, 63, 160, .4) !important;
+            color: #fff !important
+        }
+
+        /* HERO */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(108, 63, 160, .12) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 70% 60%, rgba(155, 109, 215, .06) 0%, transparent 60%)
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            opacity: .03;
+            background-image: linear-gradient(rgba(108, 63, 160, .5) 1px, transparent 1px), linear-gradient(90deg, rgba(108, 63, 160, .5) 1px, transparent 1px);
+            background-size: 60px 60px
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            text-align: center
+        }
+
+        .hero-terminal {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            color: #6C3FA0;
+            letter-spacing: .15em;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeUp .8s ease .3s forwards
+        }
+
+        .hero-terminal .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 14px;
+            background: #6C3FA0;
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle
+        }
+
+        .hero-char {
+            max-width: 300px;
+            width: 100%;
+            margin: 0 auto 2rem;
+            display: block;
+            filter: drop-shadow(0 0 60px rgba(108, 63, 160, .4)) drop-shadow(0 0 20px rgba(155, 109, 215, .2));
+            opacity: 0;
+            animation: fadeUp .8s ease .4s forwards
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 700;
+            line-height: 1.15;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUp .8s ease .5s forwards
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            background: linear-gradient(135deg, #9B6DD7, #c9a8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .hero-sub {
+            font-size: 1.1rem;
+            color: #888;
+            max-width: 560px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeUp .8s ease .7s forwards
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp .8s ease .9s forwards
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .85rem 2rem;
+            background: linear-gradient(135deg, #6C3FA0, #8B5DC8);
+            color: #fff;
+            font-weight: 600;
+            font-size: .95rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .3s;
+            box-shadow: 0 4px 24px rgba(108, 63, 160, .3)
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(108, 63, 160, .5)
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .85rem 2rem;
+            background: transparent;
+            color: #c9a8f0;
+            font-weight: 600;
+            font-size: .95rem;
+            border: 1px solid rgba(108, 63, 160, .4);
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .3s
+        }
+
+        .btn-secondary:hover {
+            background: rgba(108, 63, 160, .1);
+            border-color: rgba(108, 63, 160, .7);
+            transform: translateY(-2px)
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: float 3s ease-in-out infinite
+        }
+
+        .hero-scroll svg {
+            width: 24px;
+            height: 24px;
+            color: #444
+        }
+
+        /* SECTIONS */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto
+        }
+
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            color: #6C3FA0;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            margin-bottom: 1rem
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            line-height: 1.2
+        }
+
+        .section-desc {
+            font-size: 1.05rem;
+            color: #888;
+            max-width: 640px;
+            line-height: 1.8
+        }
+
+        .sep {
+            width: 60px;
+            height: 2px;
+            margin: 1rem 0;
+            background: linear-gradient(90deg, #6C3FA0, transparent)
+        }
+
+        /* MANIFESTO */
+        .manifesto {
+            border-top: 1px solid rgba(108, 63, 160, .1);
+            border-bottom: 1px solid rgba(108, 63, 160, .1)
+        }
+
+        .manifesto-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            margin-top: 3rem
+        }
+
+        .manifesto-block {
+            position: relative;
+            padding: 2rem 2rem 2rem 2.5rem;
+            border-left: 2px solid rgba(108, 63, 160, .3);
+            transition: all .4s
+        }
+
+        .manifesto-block:hover {
+            border-left-color: #9B6DD7;
+            background: rgba(108, 63, 160, .03)
+        }
+
+        .manifesto-block h3 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: .8rem;
+            font-weight: 600
+        }
+
+        .manifesto-block p {
+            color: #888;
+            line-height: 1.8;
+            font-size: .95rem
+        }
+
+        .hl {
+            color: #c9a8f0;
+            font-weight: 500
+        }
+
+        .manifesto-img {
+            max-width: 700px;
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid rgba(108, 63, 160, .15);
+            opacity: .85;
+            display: block;
+            margin: 0 auto
+        }
+
+        .manifesto-quote {
+            margin-top: 3rem;
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: #c9a8f0;
+            line-height: 1.6;
+            border: 1px solid rgba(108, 63, 160, .15);
+            border-radius: 12px;
+            background: rgba(108, 63, 160, .03)
+        }
+
+        /* ROADMAP */
+        .roadmap-items {
+            margin-top: 3rem
+        }
+
+        .roadmap-item {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: 50px;
+            top: 40px;
+            bottom: -24px;
+            width: 1px;
+            background: rgba(108, 63, 160, .2)
+        }
+
+        .roadmap-item:last-child::before {
+            display: none
+        }
+
+        .roadmap-num {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #9B6DD7;
+            border: 1px solid rgba(108, 63, 160, .3);
+            border-radius: 12px;
+            background: rgba(108, 63, 160, .05);
+            position: relative;
+            z-index: 1
+        }
+
+        .roadmap-content h3 {
+            font-size: 1.15rem;
+            color: #fff;
+            margin-bottom: .5rem;
+            font-weight: 600
+        }
+
+        .roadmap-content p {
+            color: #888;
+            font-size: .95rem;
+            line-height: 1.8
+        }
+
+        .roadmap-tag {
+            display: inline-block;
+            margin-top: .6rem;
+            padding: .25rem .75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .7rem;
+            color: #6C3FA0;
+            border: 1px solid rgba(108, 63, 160, .25);
+            border-radius: 4px;
+            letter-spacing: .05em
+        }
+
+        /* TOKENOMICS */
+        .tokenomics-bg {
+            background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(108, 63, 160, .06) 0%, transparent 70%)
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem
+        }
+
+        .token-card {
+            padding: 1.5rem 1.8rem;
+            border: 1px solid rgba(108, 63, 160, .12);
+            border-radius: 12px;
+            background: rgba(108, 63, 160, .02);
+            transition: all .3s
+        }
+
+        .token-card:hover {
+            border-color: rgba(108, 63, 160, .3);
+            background: rgba(108, 63, 160, .05);
+            transform: translateY(-2px)
+        }
+
+        .token-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: .6rem
+        }
+
+        .token-card-label {
+            font-size: .85rem;
+            color: #888;
+            font-weight: 500
+        }
+
+        .token-card-pct {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #c9a8f0
+        }
+
+        .token-card-detail {
+            font-size: .8rem;
+            color: #555;
+            font-family: 'JetBrains Mono', monospace
+        }
+
+        .token-bar {
+            height: 3px;
+            border-radius: 2px;
+            margin-top: .8rem;
+            background: rgba(108, 63, 160, .15);
+            overflow: hidden
+        }
+
+        .token-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #6C3FA0, #9B6DD7);
+            transition: width 1.5s ease
+        }
+
+        .token-total {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 1.5rem;
+            border: 1px solid rgba(108, 63, 160, .12);
+            border-radius: 12px;
+            background: rgba(108, 63, 160, .02)
+        }
+
+        .token-total-label {
+            font-size: .8rem;
+            color: #666;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace
+        }
+
+        .token-total-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: .3rem
+        }
+
+        .token-proof {
+            grid-column: 1/-1;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: .5rem
+        }
+
+        .proof-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .4rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, .25);
+            border-radius: 6px;
+            background: rgba(76, 175, 80, .05)
+        }
+
+        .proof-badge svg {
+            width: 14px;
+            height: 14px
+        }
+
+        .disclaimer-box {
+            margin-top: 3rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid rgba(255, 152, 0, .15);
+            border-radius: 10px;
+            background: rgba(255, 152, 0, .03);
+            font-size: .8rem;
+            color: #777;
+            line-height: 1.8
+        }
+
+        .disclaimer-box strong {
+            color: #FF9800;
+            font-weight: 600
+        }
+
+        /* CTA / GET */
+        .cta-section {
+            position: relative;
+            overflow: hidden
+        }
+
+        .cta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center
+        }
+
+        .cta-text {
+            text-align: left
+        }
+
+        .cta-img {
+            max-width: 360px;
+            width: 100%;
+            display: block;
+            margin: 0 auto;
+            border-radius: 16px;
+            border: 1px solid rgba(108, 63, 160, .2);
+            box-shadow: 0 8px 40px rgba(108, 63, 160, .15)
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(108, 63, 160, .1);
+            text-align: center
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap
+        }
+
+        .footer-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            color: #666;
+            font-size: .85rem;
+            text-decoration: none;
+            transition: color .3s
+        }
+
+        .footer-links a:hover {
+            color: #c9a8f0
+        }
+
+        .footer-links a svg {
+            width: 16px;
+            height: 16px
+        }
+
+        .footer-copy {
+            font-size: .75rem;
+            color: #444;
+            font-family: 'JetBrains Mono', monospace
+        }
+
+        /* STATUS */
+        .status-line {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .4rem 1rem;
+            margin-top: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            border-radius: 20px;
+            letter-spacing: .05em
+        }
+
+        .status-pending {
+            color: #FF9800;
+            border: 1px solid rgba(255, 152, 0, .3);
+            background: rgba(255, 152, 0, .05)
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #FF9800;
+            animation: blink 2s ease-in-out infinite
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
             }
         }
-    </script>
 
-    <style>
-        /* Asobi Rin Effects & Animations */
-        body {
-            background-color: #0D0D12;
-            background-image:
-                radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
-            color: #FFFFFF;
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0)
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-8px)
+            }
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 60px rgba(108, 63, 160, .4)) drop-shadow(0 0 20px rgba(155, 109, 215, .2))
+            }
+
+            50% {
+                filter: drop-shadow(0 0 80px rgba(108, 63, 160, .6)) drop-shadow(0 0 30px rgba(155, 109, 215, .3))
+            }
         }
 
         .reveal {
             opacity: 0;
             transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transition: opacity .8s ease, transform .8s ease
         }
 
-        .reveal.active {
+        .reveal.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0)
         }
 
-        .glitch-hover:hover {
-            animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        /* MOBILE NAV */
+        .nav-mobile-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            padding: .5rem
         }
 
-        @keyframes glitch-skew {
-            0% {
-                transform: skew(0deg);
-            }
-
-            20% {
-                transform: skew(-2deg);
-            }
-
-            40% {
-                transform: skew(2deg);
-            }
-
-            60% {
-                transform: skew(-1deg);
-            }
-
-            80% {
-                transform: skew(1deg);
-            }
-
-            100% {
-                transform: skew(0deg);
-            }
+        .nav-mobile-btn svg {
+            width: 24px;
+            height: 24px
         }
 
-        .typing-cursor::after {
-            content: '█';
-            animation: blink 1s step-start infinite;
-            color: #8B5CF6;
-        }
-
-        @keyframes blink {
-            50% {
-                opacity: 0;
+        /* RESPONSIVE */
+        @media(max-width:768px) {
+            .nav-links {
+                display: none
             }
-        }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
+            .nav-mobile-btn {
+                display: block
+            }
 
-        .glass-card:hover {
-            border-color: rgba(139, 92, 246, 0.4);
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.05);
-        }
+            .token-grid {
+                grid-template-columns: 1fr
+            }
 
-        /* Terminal styling */
-        .terminal-box {
-            background: #050508;
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.05), 0 0 15px rgba(0, 0, 0, 0.8);
+            .roadmap-item {
+                grid-template-columns: 60px 1fr;
+                gap: 1rem
+            }
+
+            .roadmap-num {
+                width: 44px;
+                height: 44px;
+                font-size: .9rem
+            }
+
+            .roadmap-item::before {
+                left: 30px
+            }
+
+            section {
+                padding: 4rem 1.5rem
+            }
+
+            .hero {
+                padding: 6rem 1.5rem 3rem
+            }
+
+            .hero-char {
+                max-width: 220px
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center
+            }
+
+            .vw-card {
+                grid-column: auto !important;
+                max-width: 100% !important
+            }
+
+            .cta-grid {
+                grid-template-columns: 1fr;
+                text-align: center
+            }
+
+            .cta-text {
+                text-align: center
+            }
+
+            .cta-img {
+                max-width: 280px
+            }
         }
     </style>
 </head>
 
-<body class="font-body antialiased selection:bg-memory selection:text-white">
+<body>
+    <canvas id="particle-canvas"></canvas>
 
-    <nav class="fixed top-0 w-full p-6 z-50 flex justify-center mix-blend-difference pointer-events-none">
-        <div class="font-mono text-xs text-memory tracking-[0.2em] uppercase typing-cursor">
-            >_ System_Reboot: RIN_PROTOCOL_v2.0
+    <!-- NAV -->
+    <nav class="nav" id="nav">
+        <div class="nav-logo">$<span>ASBI</span></div>
+        <div class="nav-links">
+            <a href="#manifesto">Manifesto</a>
+            <a href="#roadmap">Roadmap</a>
+            <a href="#tokenomics">Tokenomics</a>
+            <a href="#get" class="nav-cta">Get $ASBI</a>
         </div>
+        <button class="nav-mobile-btn" aria-label="Menu"
+            onclick="let l=this.parentElement.querySelector('.nav-links');l.style.display=l.style.display==='flex'?'none':'flex'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+        </button>
     </nav>
 
-    <section class="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
-        <div class="absolute inset-0 z-0 flex items-center justify-center opacity-30">
-            <div class="w-full max-w-4xl h-96 bg-gradient-to-t from-abyss to-memory/20 rounded-full blur-[100px]"></div>
-        </div>
-
-        <div class="relative z-10 text-center max-w-4xl mx-auto reveal flex flex-col items-center">
-
-            <div
-                class="relative w-full max-w-[280px] md:max-w-[400px] mx-auto mb-[-60px] md:mb-[-80px] z-0 opacity-80 mix-blend-screen filter drop-shadow-[0_0_30px_rgba(139,92,246,0.3)]">
-                <img src="assets/rin_character.png" alt="Rin Asobi"
-                    class="w-full h-auto object-contain animate-[float_6s_ease-in-out_infinite]">
-                <div class="absolute inset-0 bg-gradient-to-t from-abyss via-transparent to-transparent"></div>
+    <!-- HERO with IMAGE 1: Transparent Rin -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-terminal">&gt;_ System_Reboot: RIN_PROTOCOL_v2.0<span class="cursor"></span></div>
+            <img src="https://vtuber-studio.com/assets/rin_asobi_transparent.png" alt="Rin Asobi" class="hero-char"
+                style="animation:fadeUp .8s ease .4s forwards, glow 4s ease-in-out 1.2s infinite">
+            <h1>This is not just a token.<br>It's <em>our blank canvas</em>.</h1>
+            <p class="hero-sub">The world's first community-owned VTuber IP. Global audition show. Original music. Built
+                on Solana.</p>
+            <div class="hero-buttons">
+                <a href="#manifesto" class="btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
+                    </svg>
+                    Enter the Experiment
+                </a>
+                <a href="#get" class="btn-secondary">Get $ASBI</a>
             </div>
+        </div>
+        <div class="hero-scroll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7" />
+            </svg></div>
+    </section>
 
-            <h1
-                class="font-heading text-5xl md:text-7xl font-bold mb-6 leading-tight tracking-tight relative z-10 drop-shadow-2xl">
-                This is not just a token.<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-textgray">It's our blank
-                    canvas.</span>
-            </h1>
-            <p class="text-lg md:text-xl text-textgray mb-10 max-w-2xl mx-auto leading-relaxed relative z-10">
-                Reviving a lost VTuber. Building the world's first decentralized animation & IP studio. Together, we
-                reclaim the dream.
-            </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-                <a href="#experiment"
-                    class="w-full sm:w-auto px-8 py-4 bg-memory text-white font-semibold rounded uppercase tracking-wider text-sm transition-all glitch-hover border border-memory hover:border-white shadow-[0_0_20px_rgba(139,92,246,0.4)]">
-                    Join the Experiment
-                </a>
-                <a href="#buy"
-                    class="w-full sm:w-auto px-8 py-4 bg-transparent border border-memory text-memory font-semibold rounded uppercase tracking-wider text-sm hover:bg-memory/10 transition-all">
-                    Buy $ASBI on Raydium
-                </a>
+    <!-- MANIFESTO with IMAGE 2: Dark Studio -->
+    <section class="manifesto" id="manifesto">
+        <div class="container">
+            <div class="reveal">
+                <div class="section-label">// Manifesto</div>
+                <h2 class="section-title">The Future of Virtual Entertainment.</h2>
+                <div class="sep"></div>
+            </div>
+            <div class="manifesto-grid">
+                <div class="manifesto-block reveal">
+                    <h3>The IP</h3>
+                    <p>Rin is not a character owned by a company. She is the <span class="hl">world's first
+                            community-owned VTuber IP.</span> Her voice, her story, her universe &mdash; all shaped by
+                        the people who believe in her.</p>
+                </div>
+                <div class="manifesto-block reveal">
+                    <h3>The Song</h3>
+                    <p>One unreleased recording survived: <span class="hl">"This is the Time."</span> Rin's first and
+                        only song. Never released. No MV. This is where the community steps in &mdash; and the story
+                        begins.</p>
+                </div>
+                <div class="manifesto-block reveal">
+                    <h3>The Studio</h3>
+                    <p>No label. No boardroom. We're building <span class="hl">a new model of entertainment</span>
+                        &mdash; where the community creates, votes, and owns the IP. An animation studio without walls.
+                        Global. Open. On-chain.</p>
+                </div>
+            </div>
+            <div class="reveal" style="margin-top:3rem;text-align:center">
+                <img src="https://vtuber-studio.com/assets/dark_studio.png" alt="Dark Studio Manifesto"
+                    class="manifesto-img">
+            </div>
+            <div class="manifesto-quote reveal">"No label owns this. No studio controls this. The community builds
+                this."</div>
+        </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section id="roadmap">
+        <div class="container">
+            <div class="reveal">
+                <div class="section-label">// Roadmap</div>
+                <h2 class="section-title">Three Seasons. One Universe.</h2>
+                <p class="section-desc">$ASBI holders don't just watch. They decide. Every season, the community shapes
+                    what comes next.</p>
+                <div class="sep"></div>
+            </div>
+            <div class="roadmap-items">
+                <div class="roadmap-item reveal">
+                    <div class="roadmap-num">01</div>
+                    <div class="roadmap-content">
+                        <h3>V-STAR PROJECT &mdash; Season 1</h3>
+                        <p>A global VTuber audition show. Talent from around the world competes. The community watches,
+                            votes, and decides. $ASBI holders shape the outcome. Broadcast to the world. The first
+                            audition show where the audience has real power.</p>
+                        <span class="roadmap-tag">GLOBAL AUDITION</span>
+                    </div>
+                </div>
+                <div class="roadmap-item reveal">
+                    <div class="roadmap-num">02</div>
+                    <div class="roadmap-content">
+                        <h3>The Universe Expands &mdash; Season 2+</h3>
+                        <p>New characters. New music. Original animations. Community-voted storylines. AI-powered
+                            production with human direction. The IP grows as the community grows &mdash; every holder
+                            has a voice in what gets built next.</p>
+                        <span class="roadmap-tag">EXPANDING IP</span>
+                    </div>
+                </div>
+                <div class="roadmap-item reveal">
+                    <div class="roadmap-num">03</div>
+                    <div class="roadmap-content">
+                        <h3>Beyond &mdash; Community-Owned Entertainment</h3>
+                        <p>Merchandise. Live events. Cross-chain expansion. Collaborations with creators worldwide. A
+                            fully decentralized entertainment IP that no single entity controls. The blueprint for what
+                            comes after the studio model.</p>
+                        <span class="roadmap-tag">THE NEW MODEL</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="py-24 px-6 max-w-6xl mx-auto reveal">
-        <div class="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-                <h2 class="font-heading text-3xl md:text-5xl mb-8">No More Lies.<br><span class="text-memory">No More
-                        Sadness.</span></h2>
-                <div class="space-y-6 text-textgray leading-relaxed text-lg">
-                    <p>Five years ago, a scam took everything from us. I know exactly how much it hurts to be betrayed
-                        by what you believed in.</p>
-                    <p>That's why I swear: no more lies. No more deception. I will never let this project become a place
-                        of sadness again.</p>
-                    <p><strong class="text-white">$ASBI isn't just another crypto token.</strong> It's a key—a key for
-                        the entire community to share, nurture, and expand the very existence of Rin.</p>
-                    <p>We don't need a dictatorial producer anymore. No more closed-door meetings. What we are building
-                        is the <strong class="text-white">world's first decentralized animation & IP studio—decided by
-                            everyone, created by everyone.</strong></p>
-                    <p class="text-white font-semibold italic">Let's continue this lost dream. Together.</p>
+    <!-- TOKENOMICS -->
+    <section class="tokenomics-bg" id="tokenomics">
+        <div class="container">
+            <div class="reveal">
+                <div class="section-label">// Tokenomics</div>
+                <h2 class="section-title">Nothing to Hide. Full Transparency.</h2>
+                <p class="section-desc">Everything on-chain. Everything visible. Don't trust. Verify.</p>
+                <div class="sep"></div>
+            </div>
+            <div class="token-grid">
+                <div class="token-total reveal">
+                    <div class="token-total-label">Total Supply</div>
+                    <div class="token-total-value">1,000,000,000 $ASBI</div>
+                </div>
+                <div class="token-card reveal">
+                    <div class="token-card-header"><span class="token-card-label">Liquidity Pool</span><span
+                            class="token-card-pct">45%</span></div>
+                    <div class="token-card-detail">LP Burned &mdash; Permanently Locked</div>
+                    <div class="token-bar">
+                        <div class="token-bar-fill" data-width="45"></div>
+                    </div>
+                </div>
+                <div class="token-card reveal">
+                    <div class="token-card-header"><span class="token-card-label">Community</span><span
+                            class="token-card-pct">20%</span></div>
+                    <div class="token-card-detail">V-STAR, Events, Rewards, Airdrops</div>
+                    <div class="token-bar">
+                        <div class="token-bar-fill" data-width="20"></div>
+                    </div>
+                </div>
+                <div class="token-card reveal">
+                    <div class="token-card-header"><span class="token-card-label">Operations</span><span
+                            class="token-card-pct">20%</span></div>
+                    <div class="token-card-detail">18-Month Linear Vesting</div>
+                    <div class="token-bar">
+                        <div class="token-bar-fill" data-width="20"></div>
+                    </div>
+                </div>
+                <div class="token-card reveal">
+                    <div class="token-card-header"><span class="token-card-label">Team</span><span
+                            class="token-card-pct">10%</span></div>
+                    <div class="token-card-detail">6-Month Cliff, Then Linear</div>
+                    <div class="token-bar">
+                        <div class="token-bar-fill" data-width="10"></div>
+                    </div>
+                </div>
+                <div class="token-card reveal vw-card" style="grid-column:1/-1;max-width:480px;margin:0 auto">
+                    <div class="token-card-header"><span class="token-card-label">V-STAR Season 1</span><span
+                            class="token-card-pct">5%</span></div>
+                    <div class="token-card-detail">Global VTuber Audition Show</div>
+                    <div class="token-bar">
+                        <div class="token-bar-fill" data-width="5"></div>
+                    </div>
+                </div>
+                <div class="token-proof reveal">
+                    <div class="proof-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>LP Burned</div>
+                    <div class="proof-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>Mint Revoked</div>
+                    <div class="proof-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>Freeze Revoked</div>
                 </div>
             </div>
-            <div
-                class="relative aspect-square md:aspect-[4/5] bg-black/50 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group">
-                <img src="assets/dark_studio.png" alt="Dark Studio Manifesto"
-                    class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700 mix-blend-luminosity">
-                <div
-                    class="absolute inset-0 bg-gradient-to-tr from-memory/20 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-700">
+            <div class="disclaimer-box reveal">
+                <strong>Disclaimer:</strong> $ASBI is a community token associated with the PROJECT RECLAIM creative
+                project. It is not an investment vehicle and carries no guarantee of financial return. Participation in
+                community events is voluntary. Always do your own research (DYOR) and never spend more than you can
+                afford to lose. This token does not represent equity, ownership, or securities of any kind.
+            </div>
+        </div>
+    </section>
+
+    <!-- GET INVOLVED with IMAGE 3: Rin Character -->
+    <section class="cta-section" id="get" style="padding-bottom:4rem">
+        <div class="container">
+            <div class="cta-grid">
+                <div class="cta-text reveal">
+                    <div class="section-label">// Get Involved</div>
+                    <h2 class="section-title">Own the Future<br>of Entertainment.</h2>
+                    <p class="section-desc" style="margin-bottom:2rem">This is not a product to consume. It's a universe
+                        to build. $ASBI holders vote, create, and shape everything that comes next.</p>
+                    <div style="display:flex;gap:1rem;flex-wrap:wrap">
+                        <a href="#tokenomics" class="btn-primary">View Tokenomics</a>
+                        <a href="https://t.me/+vSRS6LbBy6Y5YjE1" class="btn-secondary" id="tg-link">Join Telegram</a>
+                    </div>
+                    <div style="margin-top:1.5rem">
+                        <div class="status-line status-pending"><span class="status-dot"></span>STATUS:
+                            AWAITING_DEPLOYMENT</div>
+                    </div>
+                </div>
+                <div class="reveal">
+                    <img src="https://vtuber-studio.com/assets/rin_character.png" alt="Rin Asobi" class="cta-img">
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-24 px-6 max-w-6xl mx-auto reveal relative">
-        <div class="text-center mb-16">
-            <h2 class="font-heading text-3xl md:text-5xl mb-4">You Are the Producer Now.</h2>
-            <p class="text-textgray text-lg">Holding $ASBI means you own a piece of the story.</p>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="https://x.com/asbi_token"><svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>X (Twitter)</a>
+            <a href="https://t.me/+vSRS6LbBy6Y5YjE1"><svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                </svg>Telegram</a>
+            <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 14l4-4 4 4 5-5" />
+                </svg>DexScreener</a>
         </div>
-
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="glass-card p-10 rounded-2xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10">
-                    <span class="font-mono text-6xl font-bold text-white">01</span>
-                </div>
-                <h3 class="font-heading text-2xl mb-4 text-white">Phase 1: "Voice War"</h3>
-                <p class="text-textgray leading-relaxed">Your $ASBI tokens are your voting rights. You will decide who
-                    gives Rin her new voice to complete her lost debut song, "This is the Time".</p>
-            </div>
-            <div class="glass-card p-10 rounded-2xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10">
-                    <span class="font-mono text-6xl font-bold text-white">02</span>
-                </div>
-                <h3 class="font-heading text-2xl mb-4 text-white">Phase 2 & Beyond: "The IP Studio"</h3>
-                <p class="text-textgray leading-relaxed">Rin's future outfits, new characters, and storylines. We will
-                    use AI and community governance to create high-quality animations and music. You decide where we go
-                    next.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-6 max-w-4xl mx-auto reveal">
-        <div class="mb-12">
-            <h2 class="font-heading text-3xl md:text-4xl mb-4">Nothing to Hide.<br>Full Transparency.</h2>
-            <p class="text-textgray text-lg">The last time, I failed because I tried to carry everything alone in the
-                dark. This time, everything is in the light.</p>
-        </div>
-
-        <div class="terminal-box rounded-xl p-6 md:p-8 font-mono text-sm md:text-base">
-            <div class="flex gap-2 mb-6 border-b border-trust/20 pb-4">
-                <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-                <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
-            </div>
-            <ul class="space-y-4 text-trust">
-                <li class="flex"><span class="mr-4 opacity-50">></span>Total Supply: 1,000,000,000 $ASBI</li>
-                <li class="flex"><span class="mr-4 opacity-50">></span>Liquidity Pool (LP): 45% Burned</li>
-                <li class="flex"><span class="mr-4 opacity-50">></span>Operations: 20% (18-Month Vesting)</li>
-                <li class="flex"><span class="mr-4 opacity-50">></span>Team: 10% (6-Month Cliff)</li>
-                <li class="flex"><span class="mr-4 opacity-50">></span>Voice War: 5%</li>
-                <li class="flex"><span class="mr-4 opacity-50">></span>Community: 20%</li>
-                <li class="flex text-memory animate-pulse mt-8"><span class="mr-4">></span>Status: READY_FOR_DEPLOYMENT_
-                </li>
-            </ul>
-        </div>
-    </section>
-
-    <footer class="py-12 border-t border-white/5 mt-24">
-        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <p class="text-textgray/50 text-sm font-mono">© 2026 Project RECLAIM. All rights reserved.</p>
-            <div class="flex gap-4">
-                <a href="#"
-                    class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-textgray hover:bg-memory hover:text-white transition-colors">
-                    <span class="text-xs font-mono">X</span>
-                </a>
-                <a href="#"
-                    class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-textgray hover:bg-trust hover:text-white transition-colors">
-                    <span class="text-xs font-mono">TG</span>
-                </a>
-            </div>
-        </div>
+        <div class="footer-copy">&copy; 2026 Project RECLAIM. All rights reserved.<br>$ASBI is not a security,
+            investment contract, or financial instrument.</div>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const reveals = document.querySelectorAll('.reveal');
-
-            const revealOnScroll = () => {
-                const windowHeight = window.innerHeight;
-                const elementVisible = 100;
-
-                reveals.forEach((reveal) => {
-                    const elementTop = reveal.getBoundingClientRect().top;
-                    if (elementTop < windowHeight - elementVisible) {
-                        reveal.classList.add('active');
-                    }
-                });
-            }
-
-            window.addEventListener('scroll', revealOnScroll);
-            revealOnScroll(); // Trigger once on load
-        });
+        // Particle system
+        (function () { var c = document.getElementById('particle-canvas'), x = c.getContext('2d'), w, h, ps = []; function rs() { w = c.width = innerWidth; h = c.height = innerHeight } rs(); addEventListener('resize', rs); function P() { this.reset() } P.prototype.reset = function () { this.x = Math.random() * w; this.y = Math.random() * h; this.vx = (Math.random() - .5) * .3; this.vy = (Math.random() - .5) * .3; this.s = Math.random() * 1.5 + .5; this.a = Math.random() * .5 + .1 }; P.prototype.update = function () { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset() }; P.prototype.draw = function () { x.beginPath(); x.arc(this.x, this.y, this.s, 0, Math.PI * 2); x.fillStyle = 'rgba(155,109,215,' + this.a + ')'; x.fill() }; var n = Math.min(80, Math.floor(w * h / 15000)); for (var i = 0; i < n; i++)ps.push(new P); function loop() { x.clearRect(0, 0, w, h); for (var i = 0; i < ps.length; i++) { ps[i].update(); ps[i].draw() } for (var i = 0; i < ps.length; i++)for (var j = i + 1; j < ps.length; j++) { var dx = ps[i].x - ps[j].x, dy = ps[i].y - ps[j].y, d = Math.sqrt(dx * dx + dy * dy); if (d < 120) { x.beginPath(); x.moveTo(ps[i].x, ps[i].y); x.lineTo(ps[j].x, ps[j].y); x.strokeStyle = 'rgba(108,63,160,' + (.08 * (1 - d / 120)) + ')'; x.stroke() } } requestAnimationFrame(loop) } loop() })();
+        // Scroll reveal
+        var obs = new IntersectionObserver(function (entries) { entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('visible') }) }, { threshold: .1, rootMargin: '0px 0px -40px 0px' }); document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el) });
+        // Nav scroll
+        addEventListener('scroll', function () { document.getElementById('nav').classList.toggle('scrolled', scrollY > 50) });
+        // Token bars
+        var bo = new IntersectionObserver(function (entries) { entries.forEach(function (e) { if (e.isIntersecting) { var f = e.target.querySelector('.token-bar-fill'); if (f) f.style.width = f.dataset.width + '%' } }) }, { threshold: .3 }); document.querySelectorAll('.token-card').forEach(function (el) { var f = el.querySelector('.token-bar-fill'); if (f) f.style.width = '0%'; bo.observe(el) });
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(function (a) { a.addEventListener('click', function (e) { var id = a.getAttribute('href'); if (id === '#') return; e.preventDefault(); var el = document.querySelector(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }) }) });
     </script>
 </body>
-
-</html>
