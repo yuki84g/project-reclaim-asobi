@@ -630,6 +630,56 @@
             box-shadow: 0 8px 40px rgba(108, 63, 160, .15)
         }
 
+        /* CONTRACT ADDRESS BOX */
+        .ca-box {
+            margin-top: 1.2rem;
+            padding: .8rem 1.2rem;
+            border: 1px solid rgba(108, 63, 160, .25);
+            border-radius: 8px;
+            background: rgba(108, 63, 160, .05);
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            cursor: pointer;
+            transition: all .3s;
+            max-width: 480px
+        }
+
+        .ca-box:hover {
+            border-color: rgba(108, 63, 160, .5);
+            background: rgba(108, 63, 160, .1)
+        }
+
+        .ca-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .7rem;
+            color: #6C3FA0;
+            letter-spacing: .1em;
+            white-space: nowrap
+        }
+
+        .ca-address {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            color: #c9a8f0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1
+        }
+
+        .ca-copy {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .65rem;
+            color: #888;
+            white-space: nowrap;
+            transition: color .3s
+        }
+
+        .ca-box:hover .ca-copy {
+            color: #c9a8f0
+        }
+
         /* FOOTER */
         .footer {
             padding: 3rem 2rem;
@@ -683,17 +733,20 @@
             letter-spacing: .05em
         }
 
-        .status-pending {
-            color: #FF9800;
-            border: 1px solid rgba(255, 152, 0, .3);
-            background: rgba(255, 152, 0, .05)
+        .status-live {
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, .3);
+            background: rgba(76, 175, 80, .05)
+        }
+
+        .status-live .status-dot {
+            background: #4CAF50
         }
 
         .status-dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #FF9800;
             animation: blink 2s ease-in-out infinite
         }
 
@@ -841,6 +894,10 @@
 
             .cta-img {
                 max-width: 280px
+            }
+
+            .ca-box {
+                max-width: 100%
             }
         }
     </style>
@@ -1064,12 +1121,20 @@
                     <p class="section-desc" style="margin-bottom:2rem">This is not a product to consume. It's a universe
                         to build. $ASBI holders vote, create, and shape everything that comes next.</p>
                     <div style="display:flex;gap:1rem;flex-wrap:wrap">
-                        <a href="#tokenomics" class="btn-primary">View Tokenomics</a>
-                        <a href="https://t.me/+vSRS6LbBy6Y5YjE1" class="btn-secondary" id="tg-link">Join Telegram</a>
+                        <a href="https://raydium.io/swap/?inputMint=sol&outputMint=4y5CQ5MkW8151AF7PoRxD9B77eKYwXKQ7v7oQNwUppsA"
+                            class="btn-primary" target="_blank" rel="noopener">Get $ASBI on Raydium</a>
+                        <a href="https://t.me/+vSRS6LbBy6Y5YjE1" class="btn-secondary" target="_blank"
+                            rel="noopener">Join Telegram</a>
+                    </div>
+                    <!-- CONTRACT ADDRESS -->
+                    <div class="ca-box"
+                        onclick="navigator.clipboard.writeText('4y5CQ5MkW8151AF7PoRxD9B77eKYwXKQ7v7oQNwUppsA').then(()=>{this.querySelector('.ca-copy').textContent='Copied!'});setTimeout(()=>{this.querySelector('.ca-copy').textContent='Click to copy'},2000)">
+                        <span class="ca-label">CA:</span>
+                        <span class="ca-address">4y5CQ5MkW8151AF7PoRxD9B77eKYwXKQ7v7oQNwUppsA</span>
+                        <span class="ca-copy">Click to copy</span>
                     </div>
                     <div style="margin-top:1.5rem">
-                        <div class="status-line status-pending"><span class="status-dot"></span>STATUS:
-                            AWAITING_DEPLOYMENT</div>
+                        <div class="status-line status-live"><span class="status-dot"></span>STATUS: LIVE</div>
                     </div>
                 </div>
                 <div class="reveal">
@@ -1090,7 +1155,8 @@
                     <path
                         d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
                 </svg>Telegram</a>
-            <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <a href="https://dexscreener.com/solana/4y5CQ5MkW8151AF7PoRxD9B77eKYwXKQ7v7oQNwUppsA" target="_blank"
+                rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 3v18h18" />
                     <path d="M7 14l4-4 4 4 5-5" />
                 </svg>DexScreener</a>
